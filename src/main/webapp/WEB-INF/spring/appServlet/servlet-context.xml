@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/c"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+
+    <mvc:annotation-driven/>
+    <context:component-scan base-package="com.anyware.assessment" />
+
+
+
+    <!--<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
+        <property name="driverClassName" value="org.postgresql.Driver"/>
+        <property name="url" value="jdbc:postgresql://localhost:5432/School"/>
+        <property name="username" value="postgres"/>
+        <property name="password" value="123456"/>
+    </bean>-->
+
+    <bean id="myDataSource"
+          class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="org.postgresql.Driver" />
+        <property name="url" value="jdbc:postgresql://localhost:5432/School" />
+        <property name="username" value="postgres" />
+        <property name="password" value="123456" />
+        <property name="connectionProperties">
+            <props>
+                <prop key="socketTimeout">10</prop>
+            </props>
+        </property>
+    </bean>
+
+
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+        <property name="dataSource" ref="myDataSource" />
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
+                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+            </props>
+        </property>
+        <property name="mappingResources">
+            <value>com/anyware/assessment/model</value>
+        </property>
+    </bean>
+
+
+    <!--<bean id="sessionFactory"
+          class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="configLocation" value="classpath:hibernate.cfg.xml" />
+    </bean>-->
+
+    <tx:annotation-driven/>
+    <bean id="transactionManager"
+          class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+
+
+    <!-- DAO BEANS -->
+
+    <bean id="CourseDAO" class="com.anyware.assessment.DAO.CourseDAOImpl">
+        <constructor-arg ref="sessionFactory"/>
+    </bean>
+    <bean id="QuizDAO" class="com.anyware.assessment.DAO.QuizDAOImpl">
+        <constructor-arg ref="sessionFactory"/>
+    </bean>
+    <bean id="TeacherDAO" class="com.anyware.assessment.DAO.TeacherDAOImpl">
+        <constructor-arg ref="sessionFactory"/>
+    </bean>
+    <bean id="StudentDAO" class="com.anyware.assessment.DAO.StudentDAOImpl">
+        <constructor-arg ref="sessionFactory"/>
+    </bean>
+
+    <!--Services beans-->
+    <bean id="studentService" class="com.anyware.assessment.service.StudentService">
+        <property name="studentDAO" ref="StudentDAO"/>
+    </bean>
+    <bean id="teacherService" class="com.anyware.assessment.service.TeacherService">
+        <property name="teacherDAO" ref="TeacherDAO"/>
+    </bean>
+    <bean id="quizService" class="com.anyware.assessment.service.QuizService">
+        <property name="quizDAO" ref="QuizDAO"/>
+    </bean>
+    <bean id="courseService" class="com.anyware.assessment.service.CourseService">
+        <property name="courseDAO" ref="CourseDAO"/>
+    </bean>
+
+    <!--Controller Beans-->
+    <bean id="courseController" class="com.anyware.assessment.controller.CourseController">
+        <property name="courseService" ref="courseService"/>
+    </bean>
+    <bean id="quizController" class="com.anyware.assessment.controller.QuizController">
+        <property name="quizService" ref="quizService"/>
+    </bean>
+    <bean id="studentController" class="com.anyware.assessment.controller.StudentController">
+        <property name="studentService" ref="studentService"/>
+    </bean>
+    <bean id="teacherController" class="com.anyware.assessment.controller.TeacherController">
+        <property name="teacherService" ref="teacherService"/>
+    </bean>
+
+
+
+</beans>
