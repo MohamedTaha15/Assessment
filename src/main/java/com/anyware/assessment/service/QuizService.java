@@ -3,6 +3,7 @@ package com.anyware.assessment.service;
 
 import com.anyware.assessment.DAO.QuizDAO;
 import com.anyware.assessment.model.Quiz;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

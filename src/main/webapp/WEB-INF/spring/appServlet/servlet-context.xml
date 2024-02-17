@@ -4,6 +4,7 @@
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/mvc
@@ -11,13 +12,59 @@
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/tx
-        http://www.springframework.org/schema/tx/spring-tx.xsd">
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/data/jpa
+        http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+
+    <mvc:annotation-driven/>
+    <context:component-scan base-package="com.anyware.assessment" />
+
+    <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
+        <property name="driverClassName" value="org.postgresql.Driver"/>
+        <property name="url" value="jdbc:postgresql://localhost:5432/School"/>
+        <property name="username" value="postgres"/>
+        <property name="password" value="123456"/>
+    </bean>
+
+    <jpa:repositories base-package="com.anyware.assessment.DAO"/>
+
+    <bean id="entityManager" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="packagesToScan" value="com.anyware.assessment.model"/>
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+                <property name="databasePlatform" value="org.hibernate.dialect.PostgreSQLDialect"/>
+                <property name="showSql" value="true"/>
+            </bean>
+        </property>
+    </bean>
+
+    <tx:annotation-driven/>
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
+
+
+
+<!--<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd">-->
 <!--<beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">-->
 
-
+<!--
     <mvc:annotation-driven/>
     <context:component-scan base-package="com.anyware.assessment" />
 
@@ -30,7 +77,7 @@
         <property name="password" value="123456"/>
     </bean>
 
-    <!--<bean id="datasource"
+    &lt;!&ndash;<bean id="datasource"
           class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.postgresql.Driver" />
         <property name="url" value="jdbc:postgresql://localhost:5432/School" />
@@ -41,7 +88,7 @@
                 <prop key="socketTimeout">10</prop>
             </props>
         </property>
-    </bean>-->
+    </bean>&ndash;&gt;
 
 
 
@@ -62,7 +109,7 @@
             </list>
         </property>
         <property name="configLocation" value="classpath:hibernate.cfg.xml" />
-    </bean>
+    </bean>-->
 
 
     <!--<bean id="sessionFactory"
@@ -71,34 +118,33 @@
         <property name="configLocation" value="classpath:hibernate.cfg.xml" />
     </bean>-->
 
-    <tx:annotation-driven/>
+<!--    <tx:annotation-driven/>
     <bean id="transactionManager"
           class="org.springframework.orm.hibernate5.HibernateTransactionManager">
         <property name="sessionFactory" ref="sessionFactory" />
-    </bean>
+    </bean>-->
 
 
     <!-- DAO BEANS -->
 
     <bean id="courseDAO" class="com.anyware.assessment.DAO.CourseDAOImpl">
-        <constructor-arg ref="sessionFactory"/>
+        <constructor-arg ref="entityManager"/>
     </bean>
     <bean id="quizDAO" class="com.anyware.assessment.DAO.QuizDAOImpl">
-        <constructor-arg ref="sessionFactory"/>
+        <constructor-arg ref="entityManager"/>
     </bean>
     <bean id="teacherDAO" class="com.anyware.assessment.DAO.TeacherDAOImpl">
-        <constructor-arg ref="sessionFactory"/>
+        <constructor-arg ref="entityManager"/>
     </bean>
     <bean id="studentDAO" class="com.anyware.assessment.DAO.StudentDAOImpl">
-        <constructor-arg ref="sessionFactory"/>
+        <constructor-arg ref="entityManager"/>
     </bean>
 
 
 
 
-<!--
 
-    &lt;!&ndash;Services beans&ndash;&gt;
+    <!--Services beans-->
     <bean id="studentService" class="com.anyware.assessment.service.StudentService">
         <property name="studentDAO" ref="studentDAO"/>
     </bean>
@@ -111,7 +157,6 @@
     <bean id="courseService" class="com.anyware.assessment.service.CourseService">
         <property name="courseDAO" ref="courseDAO"/>
     </bean>
--->
 
 
 

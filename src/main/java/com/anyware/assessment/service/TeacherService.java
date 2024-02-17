@@ -3,6 +3,7 @@ package com.anyware.assessment.service;
 
 import com.anyware.assessment.DAO.TeacherDAO;
 import com.anyware.assessment.model.Teacher;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
