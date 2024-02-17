@@ -9,6 +9,7 @@ import java.util.List;
 
 @Service
 public class QuizService {
+
     private QuizDAO quizDAO;
     public void setQuizDAO(QuizDAO quizDAO){
         this.quizDAO = quizDAO;

@@ -1,8 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd">
+<!--<beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">-->
 
 
     <mvc:annotation-driven/>
@@ -10,14 +23,14 @@
 
 
 
-    <!--<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
+    <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
         <property name="driverClassName" value="org.postgresql.Driver"/>
         <property name="url" value="jdbc:postgresql://localhost:5432/School"/>
         <property name="username" value="postgres"/>
         <property name="password" value="123456"/>
-    </bean>-->
+    </bean>
 
-    <bean id="myDataSource"
+    <!--<bean id="datasource"
           class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.postgresql.Driver" />
         <property name="url" value="jdbc:postgresql://localhost:5432/School" />
@@ -28,21 +41,27 @@
                 <prop key="socketTimeout">10</prop>
             </props>
         </property>
-    </bean>
+    </bean>-->
+
+
 
 
     <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
-        <property name="dataSource" ref="myDataSource" />
+        <property name="dataSource" ref="dataSource" />
         <property name="hibernateProperties">
             <props>
                 <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
                 <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.format_sql">true</prop>
                 <prop key="hibernate.hbm2ddl.auto">update</prop>
             </props>
         </property>
-        <property name="mappingResources">
-            <value>com/anyware/assessment/model</value>
+        <property name="packagesToScan">
+            <list>
+                <value>com.anyware.assessment.model</value>
+            </list>
         </property>
+        <property name="configLocation" value="classpath:hibernate.cfg.xml" />
     </bean>
 
 
@@ -61,32 +80,41 @@
 
     <!-- DAO BEANS -->
 
-    <bean id="CourseDAO" class="com.anyware.assessment.DAO.CourseDAOImpl">
+    <bean id="courseDAO" class="com.anyware.assessment.DAO.CourseDAOImpl">
         <constructor-arg ref="sessionFactory"/>
     </bean>
-    <bean id="QuizDAO" class="com.anyware.assessment.DAO.QuizDAOImpl">
+    <bean id="quizDAO" class="com.anyware.assessment.DAO.QuizDAOImpl">
         <constructor-arg ref="sessionFactory"/>
     </bean>
-    <bean id="TeacherDAO" class="com.anyware.assessment.DAO.TeacherDAOImpl">
+    <bean id="teacherDAO" class="com.anyware.assessment.DAO.TeacherDAOImpl">
         <constructor-arg ref="sessionFactory"/>
     </bean>
-    <bean id="StudentDAO" class="com.anyware.assessment.DAO.StudentDAOImpl">
+    <bean id="studentDAO" class="com.anyware.assessment.DAO.StudentDAOImpl">
         <constructor-arg ref="sessionFactory"/>
     </bean>
 
-    <!--Services beans-->
+
+
+
+<!--
+
+    &lt;!&ndash;Services beans&ndash;&gt;
     <bean id="studentService" class="com.anyware.assessment.service.StudentService">
-        <property name="studentDAO" ref="StudentDAO"/>
+        <property name="studentDAO" ref="studentDAO"/>
     </bean>
     <bean id="teacherService" class="com.anyware.assessment.service.TeacherService">
-        <property name="teacherDAO" ref="TeacherDAO"/>
+        <property name="teacherDAO" ref="teacherDAO"/>
     </bean>
     <bean id="quizService" class="com.anyware.assessment.service.QuizService">
-        <property name="quizDAO" ref="QuizDAO"/>
+        <property name="quizDAO" ref="quizDAO"/>
     </bean>
     <bean id="courseService" class="com.anyware.assessment.service.CourseService">
-        <property name="courseDAO" ref="CourseDAO"/>
+        <property name="courseDAO" ref="courseDAO"/>
     </bean>
+-->
+
+
+
 
     <!--Controller Beans-->
     <bean id="courseController" class="com.anyware.assessment.controller.CourseController">
